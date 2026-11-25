@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Juara PJOK Kelas 2 SD - Bab 1 & 2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka (Ramah Anak & Bulat) & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+            background-color: #fef9c3; /* Cerah Kuning Lembut */
+            color: #0f172a;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        /* Gaya Kartu Tebal Ramah Anak (Neobrutalism Ceria) */
+        .kid-card {
+            border: 4px solid #0f172a;
+            box-shadow: 0 8px 0px 0px #0f172a;
+            border-radius: 1.75rem;
+        }
+        .kid-card-sm {
+            border: 3px solid #0f172a;
+            box-shadow: 0 5px 0px 0px #0f172a;
+            border-radius: 1.25rem;
+        }
+        .kid-btn {
+            border: 3.5px solid #0f172a;
+            box-shadow: 0 6px 0px 0px #0f172a;
+            border-radius: 1.25rem;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            cursor: pointer;
+        }
+        .kid-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px 0px #0f172a;
+        }
+        .kid-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0px 0px #0f172a;
+        }
+        .giant-number {
+            font-variant-numeric: tabular-nums;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
+        }
+        @keyframes bounceSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-slow {
+            animation: bounceSlow 2s infinite ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #fef08a; }
+        ::-webkit-scrollbar-thumb { background: #0f172a; border-radius: 8px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-gradient-to-b from-sky-200 via-amber-100 to-emerald-100">
+
+    <!-- ================= HUD / HEADER ATAS (SKOR & TIMER BESAR) ================= -->
+    <header class="bg-amber-300 border-b-4 border-slate-900 sticky top-0 z-40 px-3 py-2.5 md:px-6">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            
+            <!-- IDENTITAS SISWA & JUDUL -->
+            <div class="flex items-center gap-2.5">
+                <div class="bg-white w-12 h-12 md:w-14 md:h-14 rounded-2xl border-3 border-slate-900 flex items-center justify-center text-3xl shadow-sm">
+                    🏅
+                </div>
+                <div>
+                    <span class="bg-rose-500 text-white text-xs font-bold px-2.5 py-0.5 rounded-full border-2 border-slate-900 uppercase">
+                        PJOK KELAS 2 SD
+                    </span>
+                    <h1 class="font-bold text-lg md:text-2xl text-slate-900 leading-tight">
+                        ARENA JUARA BAB 1 & 2
+                    </h1>
+                    <p id="hud-student-info" class="text-xs md:text-sm font-bold text-emerald-900">
+                        Pemain: Tamu Hebat
+                    </p>
+                </div>
+            </div>
+
+            <!-- PANEL ANGKA BESAR: SKOR & TIMER 60 MENIT -->
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- KOTAK SKOR OTOMATIS BESAR -->
+                <div class="bg-emerald-300 px-3.5 py-1.5 md:px-5 md:py-2 rounded-2xl border-3 border-slate-900 text-center shadow-sm">
+                    <span class="block text-[10px] md:text-xs font-bold uppercase text-slate-800">⭐ SKOR KAMU</span>
+                    <span id="hud-score" class="giant-number font-bold text-3xl md:text-5xl text-slate-900 leading-none">0</span>
+                </div>
+
+                <!-- KOTAK TIMER 1 JAM (60:00) BESAR -->
+                <div class="bg-sky-300 px-3.5 py-1.5 md:px-5 md:py-2 rounded-2xl border-3 border-slate-900 text-center shadow-sm">
+                    <span class="block text-[10px] md:text-xs font-bold uppercase text-slate-800">⏱️ SISA WAKTU</span>
+                    <span id="hud-timer" class="giant-number font-bold text-3xl md:text-5xl text-slate-900 leading-none">60:00</span>
+                </div>
+
+                <!-- TOMBOL KONTROL SUARA & LAPORAN WA -->
+                <div class="flex flex-col gap-1.5">
+                    <button onclick="toggleSound()" id="btn-sound" class="bg-white hover:bg-amber-100 px-3 py-1.5 rounded-xl border-2 border-slate-900 text-xs md:text-sm font-bold flex items-center gap-1">
+                        🔊 <span class="hidden sm:inline">Suara ON</span>
+                    </button>
+                    <button onclick="openFinishModal()" class="bg-emerald-500 hover:bg-emerald-400 text-white px-3 py-1.5 rounded-xl border-2 border-slate-900 text-xs md:text-sm font-bold flex items-center gap-1">
+                        📲 <span class="hidden sm:inline">Kirim WA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= KONTEN UTAMA ================= -->
+    <main class="max-w-6xl mx-auto w-full px-3 py-5 md:px-6 flex-grow">
+
+        <!-- 1. LAYAR PENDAFTARAN PESERTA (AWAL) -->
+        <section id="screen-welcome" class="max-w-2xl mx-auto bg-white p-6 md:p-8 kid-card text-center space-y-5 my-4">
+            <div class="text-6xl md:text-7xl animate-bounce-slow">🏃‍♂️⚽🤸‍♀️</div>
+            <div class="inline-block bg-amber-300 px-4 py-1 rounded-full border-2 border-slate-900 text-sm font-bold uppercase">
+                Kurikulum Merdeka • PJOK Kelas 2 SD
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900">
+                Selamat Datang di Arena Juara!
+            </h2>
+            <p class="text-base md:text-lg text-slate-700 font-medium">
+                Ayo bermain <strong>8 Permainan Seru</strong> dari <strong>Bab 1 (Ayo, Gerakkan Badanmu!)</strong> dan <strong>Bab 2 (Serunya Bermain!)</strong> selama <strong>60 Menit</strong>!
+            </p>
+
+            <div class="bg-sky-100 p-5 rounded-2xl border-3 border-slate-900 text-left space-y-4">
+                <div>
+                    <label class="block text-sm md:text-base font-bold text-slate-900 mb-1">
+                        1. Nama Lengkap Siswa (Contoh: Lala / Jaya):
+                    </label>
+                    <input type="text" id="input-name" placeholder="Ketik namamu di sini..." class="w-full p-3.5 text-lg font-bold rounded-xl border-3 border-slate-900 bg-white focus:outline-none focus:ring-4 focus:ring-amber-300">
+                </div>
+                <div>
+                    <label class="block text-sm md:text-base font-bold text-slate-900 mb-1">
+                        2. Kelas / Nomor Absen:
+                    </label>
+                    <input type="text" id="input-class" placeholder="Contoh: Kelas 2A - Absen 05" class="w-full p-3.5 text-lg font-bold rounded-xl border-3 border-slate-900 bg-white focus:outline-none focus:ring-4 focus:ring-amber-300">
+                </div>
+                <div>
+                    <label class="block text-sm md:text-base font-bold text-slate-900 mb-1">
+                        3. Nomor WhatsApp Peserta / Orang Tua / Guru (Opsional):
+                    </label>
+                    <input type="tel" id="input-wa" placeholder="Contoh: 081234567890" class="w-full p-3.5 text-lg font-bold rounded-xl border-3 border-slate-900 bg-white focus:outline-none focus:ring-4 focus:ring-amber-300">
+                    <span class="text-xs text-slate-600 font-semibold block mt-1">*Untuk mengirim sertifikat skor & pemberitahuan langsung via WhatsApp!</span>
+                </div>
+            </div>
+
+            <button onclick="startSession()" class="kid-btn bg-emerald-400 hover:bg-emerald-300 text-slate-900 font-bold text-xl md:text-2xl w-full py-4 uppercase tracking-wide">
+                🚀 MULAI PETUALANGAN (60 MENIT)
+            </button>
+        </section>
+
+        <!-- 2. LOBBY PILIHAN 8 GAME INTERAKTIF (BAB 1 & BAB 2) -->
+        <section id="screen-lobby" class="hidden space-y-6">
+            <!-- BANNER INSTRUKSI & PROGRESS -->
+            <div class="bg-white p-5 kid-card flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900">
+                        🎯 Pilih Arena Permainanmu!
+                    </h2>
+                    <p class="text-slate-700 font-medium text-sm md:text-base">
+                        Selesaikan semua <strong>8 Permainan</strong> untuk mengumpulkan skor tertinggi dan bintang juara!
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 bg-amber-100 px-4 py-2.5 rounded-2xl border-3 border-slate-900">
+                    <span class="text-3xl">🏆</span>
+                    <div>
+                        <span class="text-xs font-bold uppercase text-slate-600 block">Misi Selesai</span>
+                        <span id="lobby-progress" class="giant-number text-2xl md:text-3xl font-bold text-slate-900">0 / 8</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN BAB 1: AYO, GERAKKAN BADANMU! -->
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="bg-sky-500 text-white font-bold px-4 py-1.5 rounded-2xl border-3 border-slate-900 text-base md:text-lg shadow-sm">
+                        📘 BAB 1: AYO, GERAKKAN BADANMU! (Gerak Dasar)
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="grid-bab1">
+                    <!-- Kartu Game Bab 1 dirender via JS -->
+                </div>
+            </div>
+
+            <!-- BAGIAN BAB 2: SERUNYA BERMAIN! -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center gap-2">
+                    <span class="bg-rose-500 text-white font-bold px-4 py-1.5 rounded-2xl border-3 border-slate-900 text-base md:text-lg shadow-sm">
+                        📗 BAB 2: SERUNYA BERMAIN! (Kerja Sama & Sportivitas)
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="grid-bab2">
+                    <!-- Kartu Game Bab 2 dirender via JS -->
+                </div>
+            </div>
+
+            <!-- TOMBOL SELESAI & LAPOR WHATSAPP -->
+            <div class="bg-emerald-200 p-5 kid-card flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">📲</span>
+                    <div>
+                        <h3 class="font-bold text-lg md:text-xl text-slate-900">Sudah Selesai Bermain?</h3>
+                        <p class="text-sm font-medium text-slate-800">Kirim laporan skor & bintang prestasimu langsung ke WhatsApp!</p>
+                    </div>
+                </div>
+                <button onclick="openFinishModal()" class="kid-btn bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 py-3.5 text-lg w-full sm:w-auto">
+                    ✅ SELESAI & KIRIM WA
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. ARENA BERMAIN AKTIF (CONTAINER UNTUK 8 GAME) -->
+        <section id="screen-game" class="hidden space-y-4">
+            <!-- BAR NAVIGASI ARENA -->
+            <div class="bg-white p-3.5 md:p-4 kid-card-sm flex flex-wrap items-center justify-between gap-3">
+                <button onclick="backToLobby()" class="kid-btn bg-amber-300 hover:bg-amber-200 text-slate-900 font-bold px-4 py-2 text-sm md:text-base flex items-center gap-1.5">
+                    ⬅️ Kembali ke Peta Game
+                </button>
+                <div class="text-center">
+                    <span id="active-game-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full border-2 border-slate-900 bg-sky-200 uppercase">BAB 1</span>
+                    <h2 id="active-game-title" class="font-bold text-xl md:text-2xl text-slate-900">Judul Permainan</h2>
+                </div>
+                <div class="bg-purple-200 px-4 py-1.5 rounded-xl border-2 border-slate-900 text-center">
+                    <span class="text-[10px] font-bold uppercase block">Skor Game Ini</span>
+                    <span id="active-game-score" class="giant-number font-bold text-2xl md:text-3xl text-slate-900">0</span>
+                </div>
+            </div>
+
+            <!-- AREA STAGE INTERAKTIF -->
+            <div id="game-stage" class="bg-white p-4 md:p-6 kid-card min-h-[420px] flex flex-col justify-between relative overflow-hidden">
+                <!-- Konten masing-masing game dirender secara dinamis -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL HASIL AKHIR & PEMBERITAHUAN WHATSAPP ================= -->
+    <div id="modal-finish" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white kid-card max-w-lg w-full p-6 md:p-7 text-center space-y-4 my-auto">
+            <div class="text-6xl animate-bounce-slow">🏆🎉</div>
+            <span class="bg-amber-300 text-slate-900 font-bold text-xs px-3 py-1 rounded-full border-2 border-slate-900 uppercase">
+                LAPORAN HASIL BELAJAR PJOK
+            </span>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900">
+                Hebat Sekali, <span id="res-name" class="text-emerald-600">Siswa</span>!
+            </h2>
+            <p id="res-class" class="text-sm font-bold text-slate-600">Kelas 2 SD</p>
+
+            <!-- RINGKASAN ANGKA BESAR -->
+            <div class="grid grid-cols-2 gap-3 my-2">
+                <div class="bg-emerald-200 p-4 rounded-2xl border-3 border-slate-900">
+                    <span class="text-xs font-bold uppercase text-slate-700 block">TOTAL SKOR</span>
+                    <span id="res-total-score" class="giant-number text-4xl md:text-5xl font-bold text-slate-900">0</span>
+                </div>
+                <div class="bg-sky-200 p-4 rounded-2xl border-3 border-slate-900">
+                    <span class="text-xs font-bold uppercase text-slate-700 block">GAME SELESAI</span>
+                    <span id="res-games-done" class="giant-number text-4xl md:text-5xl font-bold text-slate-900">0/8</span>
+                </div>
+            </div>
+
+            <!-- INPUT NOMOR WA TUJUAN & PREVIEW PESAN -->
+            <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-900 text-left space-y-2">
+                <label class="block text-xs font-bold uppercase text-slate-700">
+                    📱 Nomor WhatsApp Peserta / Orang Tua / Guru:
+                </label>
+                <input type="tel" id="res-wa-number" placeholder="Contoh: 081234567890" class="w-full p-2.5 text-base font-bold rounded-xl border-2 border-slate-900 bg-white">
+                
+                <label class="block text-xs font-bold uppercase text-slate-700 pt-1">
+                    ✉️ Isi Pemberitahuan Otomatis:
+                </label>
+                <textarea id="res-wa-preview" rows="4" readonly class="w-full p-2.5 text-xs font-semibold rounded-xl border-2 border-slate-300 bg-white text-slate-700"></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button onclick="sendWhatsAppNotification()" class="kid-btn bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3.5 px-5 text-base flex-1 flex items-center justify-center gap-2">
+                    <span>📲 KIRIM KE WHATSAPP</span>
+                </button>
+                <button onclick="copyReportText()" class="kid-btn bg-amber-300 hover:bg-amber-200 text-slate-900 font-bold py-3.5 px-4 text-sm flex items-center justify-center gap-1">
+                    <span>📋 Salin Teks</span>
+                </button>
+            </div>
+            <button onclick="closeFinishModal()" class="text-sm font-bold text-slate-500 hover:text-slate-900 underline pt-1">
+                Tutup & Lanjutkan Bermain
+            </button>
+        </div>
+    </div>
+
+    <!-- CUSTOM TOAST NOTIFICATION (PENGGANTI ALERT) -->
+    <div id="toast-box" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3.5 rounded-2xl border-3 border-amber-300 shadow-xl font-bold text-base md:text-lg text-center">
+        Pesan Notifikasi
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white py-4 px-4 text-center text-xs md:text-sm font-semibold mt-6">
+        <p>Media Game Interaktif PJOK SD/MI Kelas II • Bab 1 (Ayo, Gerakkan Badanmu!) & Bab 2 (Serunya Bermain!)</p>
+    </footer>
+
+    <script>
+        /* =========================================================================
+           1. STATE MANAGEMENT & KONFIGURASI SESI 1 JAM (60 MENIT)
+           ========================================================================= */
+        const STATE = {
+            studentName: "Siswa Hebat",
+            studentClass: "Kelas 2 SD",
+            studentWA: "",
+            totalScore: 0,
+            timeLeftSeconds: 60 * 60, // 60 Menit = 3600 Detik
+            timerInterval: null,
+            soundEnabled: true,
+            activeGameId: null,
+            activeLoop: null,
+            gameScores: {
+                1: 0, 2: 0, 3: 0, 4: 0,
+                5: 0, 6: 0, 7: 0, 8: 0
+            },
+            completedGames: {}
+        };
+
+        /* DAFTAR 8 GAME BERDASARKAN BUKU PDF PJOK KELAS 2 (BAB 1 & BAB 2) */
+        const GAMES_CATALOG = [
+            // BAB 1: AYO, GERAKKAN BADANMU!
+            {
+                id: 1,
+                bab: "BAB 1",
+                title: "1. Patung Ajaib & Gerak",
+                subtitle: "Meliuk, Menekuk & Patung 10 Detik",
+                icon: "🗿",
+                color: "bg-sky-200",
+                maxTarget: 100
+            },
+            {
+                id: 2,
+                bab: "BAB 1",
+                title: "2. Petualang Cilik 4 Zona",
+                subtitle: "Hutan, Padang Rumput, Ban & Simpai",
+                icon: "🏕️",
+                color: "bg-emerald-200",
+                maxTarget: 120
+            },
+            {
+                id: 3,
+                bab: "BAB 1",
+                title: "3. Peluru Bola & Kaleng",
+                subtitle: "Sentuh Kepala-Pundak & Tendang Kaleng",
+                icon: "🥫",
+                color: "bg-amber-200",
+                maxTarget: 120
+            },
+            {
+                id: 4,
+                bab: "BAB 1",
+                title: "4. Kelinci & Wortel Ceria",
+                subtitle: "Kumpulkan Wortel & Hindari Penjaga",
+                icon: "🐰",
+                color: "bg-orange-200",
+                maxTarget: 120
+            },
+            // BAB 2: SERUNYA BERMAIN!
+            {
+                id: 5,
+                bab: "BAB 2",
+                title: "5. Menyusun Warna Tim",
+                subtitle: "Urutkan Merah, Kuning, Biru, Hijau",
+                icon: "🎨",
+                color: "bg-rose-200",
+                maxTarget: 120
+            },
+            {
+                id: 6,
+                bab: "BAB 2",
+                title: "6. Gobak Sodor Jujur",
+                subtitle: "Lolos Garis Penjaga & Sikap Sportif",
+                icon: "🏃‍♀️",
+                color: "bg-purple-200",
+                maxTarget: 120
+            },
+            {
+                id: 7,
+                bab: "BAB 2",
+                title: "7. Bola Balon & Kasti",
+                subtitle: "Oper Bola, Pukul Kasti & Zona Aman",
+                icon: "🎈",
+                color: "bg-teal-200",
+                maxTarget: 120
+            },
+            {
+                id: 8,
+                bab: "BAB 2",
+                title: "8. Kuis Sikap Juara PJOK",
+                subtitle: "Evaluasi Bab 1 & Bab 2 (10 Soal)",
+                icon: "🏆",
+                color: "bg-yellow-300",
+                maxTarget: 150
+            }
+        ];
+
+        /* =========================================================================
+           2. WEB AUDIO API SOUND ENGINE (EFEK SUARA CERIA TANPA URL EKSTERNAL)
+           ========================================================================= */
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, delay = 0) {
+            if (!STATE.soundEnabled) return;
+            try {
+                ensureAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime + delay);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + delay);
+                osc.stop(audioCtx.currentTime + delay + duration);
+            } catch (e) {}
+        }
+
+        function playSFX(effect) {
+            if (!STATE.soundEnabled) return;
+            if (effect === 'click') {
+                playTone(520, 'triangle', 0.08, 0);
+            } else if (effect === 'correct') {
+                playTone(523.25, 'sine', 0.12, 0);     // C5
+                playTone(659.25, 'sine', 0.12, 0.09);  // E5
+                playTone(783.99, 'sine', 0.22, 0.18);  // G5
+            } else if (effect === 'wrong') {
+                playTone(240, 'sawtooth', 0.18, 0);
+                playTone(190, 'sawtooth', 0.25, 0.14);
+            } else if (effect === 'win') {
+                playTone(523.25, 'triangle', 0.12, 0);
+                playTone(659.25, 'triangle', 0.12, 0.1);
+                playTone(783.99, 'triangle', 0.12, 0.2);
+                playTone(1046.5, 'triangle', 0.35, 0.3);
+            } else if (effect === 'jump') {
+                playTone(350, 'sine', 0.12, 0);
+                playTone(600, 'sine', 0.15, 0.06);
+            }
+        }
+
+        function toggleSound() {
+            STATE.soundEnabled = !STATE.soundEnabled;
+            const btn = document.getElementById('btn-sound');
+            btn.innerHTML = STATE.soundEnabled ? '🔊 <span class="hidden sm:inline">Suara ON</span>' : '🔇 <span class="hidden sm:inline">Suara OFF</span>';
+            if (STATE.soundEnabled) playSFX('click');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-box');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2800);
+        }
+
+        /* =========================================================================
+           3. NAVIGASI, TIMER 1 JAM (60 MENIT) & SKOR OTOMATIS
+           ========================================================================= */
+        function startSession() {
+            ensureAudio();
+            playSFX('win');
+            const nameVal = document.getElementById('input-name').value.trim();
+            const classVal = document.getElementById('input-class').value.trim();
+            const waVal = document.getElementById('input-wa').value.trim();
+
+            STATE.studentName = nameVal || "Juara Cilik";
+            STATE.studentClass = classVal || "Kelas 2 SD";
+            STATE.studentWA = waVal;
+
+            document.getElementById('hud-student-info').innerText = `Pemain: ${STATE.studentName} (${STATE.studentClass})`;
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
+
+            renderLobbyCards();
+            startOneHourTimer();
+        }
+
+        function startOneHourTimer() {
+            if (STATE.timerInterval) clearInterval(STATE.timerInterval);
+            updateTimerDisplay();
+            STATE.timerInterval = setInterval(() => {
+                if (STATE.timeLeftSeconds > 0) {
+                    STATE.timeLeftSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(STATE.timerInterval);
+                    showToast("⏰ Waktu 1 Jam Selesai! Ayo kirim skormu ke WhatsApp!");
+                    openFinishModal();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(STATE.timeLeftSeconds / 60);
+            const secs = STATE.timeLeftSeconds % 60;
+            const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            document.getElementById('hud-timer').innerText = formatted;
+        }
+
+        function addScore(gameId, points) {
+            STATE.gameScores[gameId] = Math.max(0, (STATE.gameScores[gameId] || 0) + points);
+            // Hitung ulang total skor otomatis
+            STATE.totalScore = Object.values(STATE.gameScores).reduce((a, b) => a + b, 0);
+            document.getElementById('hud-score').innerText = STATE.totalScore;
+            if (STATE.activeGameId === gameId) {
+                document.getElementById('active-game-score').innerText = STATE.gameScores[gameId];
+            }
+        }
+
+        function markGameCompleted(gameId) {
+            STATE.completedGames[gameId] = true;
+            const doneCount = Object.keys(STATE.completedGames).length;
+            document.getElementById('lobby-progress').innerText = `${doneCount} / 8`;
+            renderLobbyCards();
+        }
+
+        function renderLobbyCards() {
+            const grid1 = document.getElementById('grid-bab1');
+            const grid2 = document.getElementById('grid-bab2');
+            grid1.innerHTML = '';
+            grid2.innerHTML = '';
+
+            GAMES_CATALOG.forEach(game => {
+                const isDone = !!STATE.completedGames[game.id];
+                const score = STATE.gameScores[game.id] || 0;
+                const card = document.createElement('div');
+                card.className = `${game.color} p-4 kid-card-sm flex flex-col justify-between space-y-3 relative`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <span class="text-4xl md:text-5xl bg-white p-2.5 rounded-2xl border-2 border-slate-900 shadow-sm">${game.icon}</span>
+                        ${isDone 
+                            ? `<span class="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full border-2 border-slate-900">✅ SELESAI</span>`
+                            : `<span class="bg-white text-slate-900 text-xs font-bold px-2.5 py-1 rounded-full border-2 border-slate-900">SIAP MAIN</span>`
+                        }
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg md:text-xl text-slate-900 leading-snug">${game.title}</h3>
+                        <p class="text-xs md:text-sm font-semibold text-slate-700 mt-0.5">${game.subtitle}</p>
+                    </div>
+                    <div class="pt-2 border-t-2 border-slate-900/20 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase block text-slate-700">Skor Arena</span>
+                            <span class="giant-number text-2xl font-bold text-slate-900">${score}</span>
+                        </div>
+                        <button onclick="launchGame(${game.id})" class="kid-btn bg-white hover:bg-amber-300 text-slate-900 font-bold px-4 py-2 text-sm md:text-base">
+                            ▶️ MAIN
+                        </button>
+                    </div>
+                `;
+
+                if (game.bab === "BAB 1") grid1.appendChild(card);
+                else grid2.appendChild(card);
+            });
+        }
+
+        function clearActiveGameLoop() {
+            if (STATE.activeLoop) {
+                clearInterval(STATE.activeLoop);
+                STATE.activeLoop = null;
+            }
+        }
+
+        function backToLobby() {
+            playSFX('click');
+            clearActiveGameLoop();
+            STATE.activeGameId = null;
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
+            renderLobbyCards();
+        }
+
+        function launchGame(gameId) {
+            playSFX('click');
+            clearActiveGameLoop();
+            STATE.activeGameId = gameId;
+            const gameMeta = GAMES_CATALOG.find(g => g.id === gameId);
+
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            document.getElementById('active-game-badge').innerText = gameMeta.bab;
+            document.getElementById('active-game-title').innerText = gameMeta.title;
+            document.getElementById('active-game-score').innerText = STATE.gameScores[gameId] || 0;
+
+            const stage = document.getElementById('game-stage');
+            stage.innerHTML = '';
+
+            switch (gameId) {
+                case 1: initGame1_PatungAjaib(stage); break;
+                case 2: initGame2_PetualangCilik(stage); break;
+                case 3: initGame3_PeluruKaleng(stage); break;
+                case 4: initGame4_KelinciWortel(stage); break;
+                case 5: initGame5_MenyusunWarna(stage); break;
+                case 6: initGame6_GobakSodor(stage); break;
+                case 7: initGame7_BolaBalonKasti(stage); break;
+                case 8: initGame8_KuisJuara(stage); break;
+            }
+        }
+
+        /* =========================================================================
+           GAME 1 (BAB 1): PERMAINAN PATUNG AJAIB & GERAK DI TEMPAT
+           ========================================================================= */
+        function initGame1_PatungAjaib(stage) {
+            const commands = [
+                { cmd: "LIUKKAN BADANMU!", icon: "💃", key: "meliuk", desc: "Gerakkan tubuh ke kiri & kanan dengan lentur!" },
+                { cmd: "MENEKUK LUTUT!", icon: "🧎", key: "menekuk", desc: "Tekuk lutut atau tubuhmu dengan seimbang!" },
+                { cmd: "AYUNKAN LENGAN!", icon: "🙆", key: "mengayun", desc: "Ayunkan tangan atau kaki ke depan & belakang!" },
+                { cmd: "CIUM LUTUTMU!", icon: "🙇", key: "cium", desc: "Bungkukkan badan untuk melatih kelenturan!" },
+                { cmd: "PATUNG AJAIB!", icon: "🗿", key: "patung", desc: "DIAM SEPERTI PATUNG SELAMA 10 HITUNGAN!" }
+            ];
+
+            let round = 0;
+            let statueCount = 10;
+
+            function renderRound() {
+                clearActiveGameLoop();
+                if (round >= 6) {
+                    markGameCompleted(1);
+                    playSFX('win');
+                    stage.innerHTML = `
+                        <div class="text-center my-auto space-y-4 py-6">
+                            <div class="text-7xl">🗿✨</div>
+                            <h3 class="text-3xl font-bold text-emerald-700">Luar Biasa! Tubuhmu Lentur & Seimbang!</h3>
+                            <p class="text-lg font-medium text-slate-700">Kamu berhasil mengikuti semua perintah Guru di Permainan Patung Ajaib.</p>
+                            <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">LANJUT KE GAME BERIKUTNYA ➡️</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const target = commands[round % commands.length];
+                const isStatue = target.key === "patung";
+
+                stage.innerHTML = `
+                    <div class="text-center space-y-3">
+                        <span class="bg-amber-200 px-4 py-1 rounded-full border-2 border-slate-900 font-bold text-sm">
+                            RONDE <span class="text-xl">${round + 1}</span> DARI <span class="text-xl">6</span>
+                        </span>
+                        <div class="bg-sky-100 p-5 rounded-3xl border-3 border-slate-900 max-w-xl mx-auto">
+                            <p class="text-sm font-bold text-sky-900 uppercase">📢 PERINTAH GURU PJOK:</p>
+                            <div class="text-6xl my-2 animate-bounce-slow">${target.icon}</div>
+                            <h3 class="text-3xl md:text-4xl font-bold text-slate-900">"${target.cmd}"</h3>
+                            <p class="text-sm font-semibold text-slate-700 mt-1">${target.desc}</p>
+                        </div>
+                    </div>
+
+                    <div id="g1-action-area" class="my-4 text-center">
+                        ${isStatue ? `
+                            <div class="bg-rose-100 p-5 rounded-3xl border-3 border-slate-900 max-w-md mx-auto space-y-2">
+                                <p class="font-bold text-rose-900 text-lg">JANGAN GERAK! Tahan Posisi Patung:</p>
+                                <div id="statue-counter" class="giant-number text-6xl md:text-7xl font-bold text-rose-600">10</div>
+                                <button id="btn-hold-statue" onclick="finishStatueRound()" class="hidden kid-btn bg-emerald-400 px-6 py-3 text-xl font-bold w-full">
+                                    ✅ SELESAI MENAHAN PATUNG! (+25 POIN)
+                                </button>
+                            </div>
+                        ` : `
+                            <p class="font-bold text-slate-700 mb-3 text-base md:text-lg">Pilih tombol gerakan yang sesuai perintah guru:</p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+                                ${commands.slice(0, 4).map(c => `
+                                    <button onclick="checkG1Choice('${c.key}', '${target.key}')" class="kid-btn bg-white hover:bg-amber-200 p-4 flex flex-col items-center gap-1">
+                                        <span class="text-4xl">${c.icon}</span>
+                                        <span class="font-bold text-base uppercase">${c.key}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+
+                if (isStatue) {
+                    statueCount = 10;
+                    STATE.activeLoop = setInterval(() => {
+                        statueCount--;
+                        const el = document.getElementById('statue-counter');
+                        if (el) el.innerText = statueCount;
+                        playTone(440 + (10 - statueCount) * 30, 'sine', 0.08);
+                        if (statueCount <= 0) {
+                            clearActiveGameLoop();
+                            if (el) el.innerText = "0! HEBAT!";
+                            const btn = document.getElementById('btn-hold-statue');
+                            if (btn) btn.classList.remove('hidden');
+                        }
+                    }, 700);
+                }
+            }
+
+            window.checkG1Choice = function(chosen, correct) {
+                if (chosen === correct) {
+                    playSFX('correct');
+                    addScore(1, 20);
+                    showToast("🎉 Tepat Sekali! +20 Poin!");
+                    round++;
+                    renderRound();
+                } else {
+                    playSFX('wrong');
+                    showToast("😅 Ups, dengarkan perintah guru lagi ya!");
+                }
+            };
+
+            window.finishStatueRound = function() {
+                playSFX('correct');
+                addScore(1, 25);
+                showToast("🗿 Patung Ajaib Berhasil! +25 Poin!");
+                round++;
+                renderRound();
+            };
+
+            renderRound();
+        }
+
+        /* =========================================================================
+           GAME 2 (BAB 1): PETUALANG CILIK (4 ZONA ALAM)
+           ========================================================================= */
+        function initGame2_PetualangCilik(stage) {
+            const zones = [
+                {
+                    num: 1,
+                    name: "ZONA 1: HUTAN RINDANG",
+                    icon: "🌲🦌",
+                    task: "Berjalanlah dengan hati-hati di atas garis lurus agar tidak mengusik hewan hutan!",
+                    actionLabel: "👣 BERJALAN HATI-HATI DI GARIS",
+                    color: "bg-emerald-200",
+                    tapsNeeded: 5
+                },
+                {
+                    num: 2,
+                    name: "ZONA 2: PADANG RUMPUT",
+                    icon: "🐎🌿",
+                    task: "Ikuti jejak kuda! Berlarilah ZIGZAG melewati pembatas jalur!",
+                    actionLabel: "⚡ LARI ZIGZAG IKUTI JALUR",
+                    color: "bg-lime-200",
+                    tapsNeeded: 6
+                },
+                {
+                    num: 3,
+                    name: "ZONA 3: SUNGAI BERBATU",
+                    icon: "🪨🌊",
+                    task: "Ada banyak batu sungai! Melompatlah tepat ke dalam BAN BEKAS!",
+                    actionLabel: "🦘 MELOMPAT KE BAN BEKAS",
+                    color: "bg-sky-200",
+                    tapsNeeded: 5
+                },
+                {
+                    num: 4,
+                    name: "ZONA 4: DI JEMBATAN SIMPAI",
+                    icon: "⭕🌉",
+                    task: "Loncatlah ke dalam SIMPAI dengan kedua kaki mendarat seimbang!",
+                    actionLabel: "🤸 LONCAT KE DALAM SIMPAI",
+                    color: "bg-amber-200",
+                    tapsNeeded: 5
+                }
+            ];
+
+            let currentZoneIdx = 0;
+            let tapsDone = 0;
+
+            function renderZone() {
+                if (currentZoneIdx >= zones.length) {
+                    markGameCompleted(2);
+                    playSFX('win');
+                    stage.innerHTML = `
+                        <div class="text-center my-auto space-y-4 py-6">
+                            <div class="text-7xl">🏕️🏅</div>
+                            <h3 class="text-3xl font-bold text-emerald-700">Misi Petualang Cilik Tuntas!</h3>
+                            <p class="text-lg font-medium text-slate-700">Kamu berhasil melewati Hutan, Padang Rumput, Sungai Berbatu, dan Jembatan Simpai!</p>
+                            <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const z = zones[currentZoneIdx];
+                const pct = Math.min(100, Math.round((tapsDone / z.tapsNeeded) * 100));
+
+                stage.innerHTML = `
+                    <div class="space-y-4 text-center">
+                        <!-- PETA MINI 4 ZONA -->
+                        <div class="grid grid-cols-4 gap-2 max-w-2xl mx-auto">
+                            ${zones.map((item, idx) => `
+                                <div class="p-2 rounded-xl border-2 border-slate-900 font-bold text-xs md:text-sm ${idx === currentZoneIdx ? 'bg-amber-300 scale-105' : idx < currentZoneIdx ? 'bg-emerald-400 text-white' : 'bg-slate-100 text-slate-400'}">
+                                    ZONA ${item.num} ${idx < currentZoneIdx ? '✅' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="${z.color} p-6 rounded-3xl border-3 border-slate-900 max-w-xl mx-auto space-y-3">
+                            <div class="text-6xl">${z.icon}</div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900">${z.name}</h3>
+                            <p class="text-base font-semibold text-slate-800">${z.task}</p>
+
+                            <!-- PROGRESS BAR LANGKAH -->
+                            <div class="bg-white h-8 rounded-full border-3 border-slate-900 overflow-hidden p-1">
+                                <div class="bg-emerald-500 h-full rounded-full transition-all duration-200" style="width: ${pct}%"></div>
+                            </div>
+                            <div class="giant-number text-3xl font-bold text-slate-900">
+                                Langkah: ${tapsDone} / ${z.tapsNeeded}
+                            </div>
+                        </div>
+
+                        <button onclick="stepAdventureZone()" class="kid-btn bg-rose-400 hover:bg-rose-300 text-slate-900 font-bold text-xl md:text-2xl px-8 py-5 max-w-md w-full mx-auto">
+                            ${z.actionLabel}
+                        </button>
+                    </div>
+                `;
+            }
+
+            window.stepAdventureZone = function() {
+                playSFX('jump');
+                tapsDone++;
+                const z = zones[currentZoneIdx];
+                if (tapsDone >= z.tapsNeeded) {
+                    playSFX('correct');
+                    addScore(2, 30);
+                    showToast(`🌟 ${z.name} Selesai! +30 Poin!`);
+                    currentZoneIdx++;
+                    tapsDone = 0;
+                }
+                renderZone();
+            };
+
+            renderZone();
+        }
+
+        /* =========================================================================
+           GAME 3 (BAB 1): PELURU BOLA & MEROBOHKAN PIRAMIDA KALENG
+           ========================================================================= */
+        function initGame3_PeluruKaleng(stage) {
+            let step = 1; // 1: Kepala, 2: Pundak, 3: Ambil Bola & Tendang Kaleng
+            let cansKnocked = 0;
+
+            function renderPeluru() {
+                stage.innerHTML = `
+                    <div class="text-center space-y-4">
+                        <div class="bg-amber-100 p-4 rounded-2xl border-3 border-slate-900 max-w-2xl mx-auto">
+                            <span class="text-xs font-bold uppercase text-amber-900">PERMAINAN PELURU BOLA & BOLA KALENG</span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
+                                ${step === 1 ? '1️⃣ Guru Berkata: "SENTUH KEPALA!"' : 
+                                  step === 2 ? '2️⃣ Guru Berkata: "PEGANG PUNDAK!"' : 
+                                  '3️⃣ Guru Berkata: "AMBIL BOLA & ROBOHKAN KALENG!"'}
+                            </h3>
+                        </div>
+
+                        <!-- VISUAL PIRAMIDA KALENG -->
+                        <div class="bg-emerald-100 p-5 rounded-3xl border-3 border-slate-900 max-w-xl mx-auto">
+                            <p class="text-sm font-bold text-emerald-900 mb-2">Piramida Kaleng Sasaran (Roboh: <span class="text-2xl">${cansKnocked}</span>/6):</p>
+                            <div class="flex flex-col items-center gap-1.5 my-2">
+                                <div class="flex gap-2">
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 6 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 4 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 5 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 1 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 2 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                    <span class="text-4xl transition-transform ${cansKnocked >= 3 ? 'rotate-90 opacity-40' : ''}">🥫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TOMBOL AKSI -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
+                            <button onclick="actionPeluru(1)" class="kid-btn bg-sky-200 hover:bg-sky-300 p-4 font-bold text-lg">
+                                😊 SENTUH KEPALA
+                            </button>
+                            <button onclick="actionPeluru(2)" class="kid-btn bg-purple-200 hover:bg-purple-300 p-4 font-bold text-lg">
+                                💪 PEGANG PUNDAK
+                            </button>
+                            <button onclick="actionPeluru(3)" class="kid-btn bg-rose-400 hover:bg-rose-300 p-4 font-bold text-lg">
+                                ⚽ TENDANG KE KALENG!
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            window.actionPeluru = function(btnId) {
+                if (btnId === step) {
+                    if (step < 3) {
+                        playSFX('correct');
+                        addScore(3, 15);
+                        showToast("✅ Gerakan Tepat! +15 Poin!");
+                        step++;
+                        renderPeluru();
+                    } else {
+                        playSFX('jump');
+                        cansKnocked += 2;
+                        addScore(3, 30);
+                        showToast("💥 BRAK! Kaleng Roboh! +30 Poin!");
+                        if (cansKnocked >= 6) {
+                            markGameCompleted(3);
+                            playSFX('win');
+                            stage.innerHTML = `
+                                <div class="text-center my-auto space-y-4 py-6">
+                                    <div class="text-7xl">🥫⚽🎉</div>
+                                    <h3 class="text-3xl font-bold text-emerald-700">Semua Kaleng Berhasil Roboh!</h3>
+                                    <p class="text-lg font-medium text-slate-700">Tendangan dan kontrol bolamu sangat akurat!</p>
+                                    <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                                </div>
+                            `;
+                            return;
+                        } else {
+                            step = 1; // Ulangi aba-aba guru untuk tembakan berikutnya
+                            renderPeluru();
+                        }
+                    }
+                } else {
+                    playSFX('wrong');
+                    showToast("⚠️ Dengarkan aba-aba guru dengan teliti ya!");
+                }
+            };
+
+            renderPeluru();
+        }
+
+        /* =========================================================================
+           GAME 4 (BAB 1): KELINCI DAN WORTEL (KUMPULKAN BOLA KECIL)
+           ========================================================================= */
+        function initGame4_KelinciWortel(stage) {
+            let carrotsCollected = 0;
+            const targetCarrots = 6;
+            let guardBlocking = false;
+
+            function renderRabbitGame() {
+                stage.innerHTML = `
+                    <div class="text-center space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 bg-orange-100 p-4 rounded-2xl border-3 border-slate-900">
+                            <div class="text-left">
+                                <span class="text-xs font-bold uppercase text-orange-800">PERMAINAN KELINCI & WORTEL</span>
+                                <h3 class="text-xl md:text-2xl font-bold text-slate-900">Ambil Wortel saat Penjaga Kebun Lengah!</h3>
+                            </div>
+                            <div class="bg-white px-4 py-2 rounded-2xl border-2 border-slate-900">
+                                <span class="text-xs font-bold block">🥕 WORTEL TERKUMPUL</span>
+                                <span class="giant-number text-3xl font-bold text-orange-600">${carrotsCollected} / ${targetCarrots}</span>
+                            </div>
+                        </div>
+
+                        <!-- AREA KEBUN & STATUS PENJAGA -->
+                        <div class="p-6 rounded-3xl border-4 border-slate-900 max-w-xl mx-auto transition-colors duration-200 ${guardBlocking ? 'bg-rose-200' : 'bg-emerald-200'}">
+                            <div class="text-6xl mb-2">${guardBlocking ? '🛑👮‍♂️' : '🐰🥕🥕'}</div>
+                            <h4 class="text-2xl md:text-3xl font-bold ${guardBlocking ? 'text-rose-900' : 'text-emerald-950'}">
+                                ${guardBlocking ? 'AWAS! PENJAGA KEBUN MENGHADANG!' : 'AMAN! AYO LOMPAT AMBIL WORTEL!'}
+                            </h4>
+                            <p class="text-sm font-semibold mt-1 text-slate-800">
+                                ${guardBlocking ? 'Berhenti di Zona Aman selama 3 detik!' : 'Klik tombol di bawah untuk melompat & mengambil 1 wortel!'}
+                            </p>
+                        </div>
+
+                        <div class="flex justify-center gap-4">
+                            <button onclick="grabCarrot()" class="kid-btn bg-amber-300 hover:bg-amber-200 text-slate-900 font-bold text-xl md:text-2xl px-8 py-5">
+                                🐰 LOMPAT AMBIL WORTEL!
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Penjaga berganti posisi setiap 1.6 detik
+            STATE.activeLoop = setInterval(() => {
+                guardBlocking = !guardBlocking;
+                renderRabbitGame();
+            }, 1600);
+
+            window.grabCarrot = function() {
+                if (guardBlocking) {
+                    playSFX('wrong');
+                    showToast("🛑 Tersentuh Penjaga! Jujur kembali ke Zona Aman ya!");
+                } else {
+                    playSFX('correct');
+                    carrotsCollected++;
+                    addScore(4, 20);
+                    showToast("🥕 Berhasil dapat 1 Wortel! +20 Poin!");
+                    if (carrotsCollected >= targetCarrots) {
+                        clearActiveGameLoop();
+                        markGameCompleted(4);
+                        playSFX('win');
+                        stage.innerHTML = `
+                            <div class="text-center my-auto space-y-4 py-6">
+                                <div class="text-7xl">🐰🏆🥕</div>
+                                <h3 class="text-3xl font-bold text-emerald-700">Kelinci Lincah Berhasil!</h3>
+                                <p class="text-lg font-medium text-slate-700">Kamu mengumpulkan semua wortel dengan lincah dan jujur!</p>
+                                <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                            </div>
+                        `;
+                        return;
+                    }
+                    renderRabbitGame();
+                }
+            };
+
+            renderRabbitGame();
+        }
+
+        /* =========================================================================
+           GAME 5 (BAB 2): MENYUSUN WARNA (MERAH - KUNING - BIRU - HIJAU)
+           ========================================================================= */
+        function initGame5_MenyusunWarna(stage) {
+            const targetOrder = [
+                { name: "MERAH", hex: "bg-red-500 text-white", emoji: "🔴" },
+                { name: "KUNING", hex: "bg-yellow-400 text-slate-900", emoji: "🟡" },
+                { name: "BIRU", hex: "bg-blue-500 text-white", emoji: "🔵" },
+                { name: "HIJAU", hex: "bg-emerald-500 text-white", emoji: "🟢" }
+            ];
+
+            let currentStep = 0;
+            let round = 1;
+
+            function renderColorGame() {
+                // Acak urutan tombol pilihan
+                const shuffled = [...targetOrder].sort(() => Math.random() - 0.5);
+
+                stage.innerHTML = `
+                    <div class="text-center space-y-5">
+                        <div class="bg-rose-100 p-4 rounded-2xl border-3 border-slate-900 max-w-2xl mx-auto">
+                            <span class="text-xs font-bold uppercase text-rose-800">BAB 2 • PERMAINAN MENYUSUN WARNA (RONDE ${round}/2)</span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
+                                Susun Bola Sesuai Urutan Buku PJOK:
+                            </h3>
+                            <p class="text-base font-bold text-slate-700 mt-1">
+                                1. MERAH ➡️ 2. KUNING ➡️ 3. BIRU ➡️ 4. HIJAU
+                            </p>
+                        </div>
+
+                        <!-- SLOT GELAS PLASTIK -->
+                        <div class="grid grid-cols-4 gap-3 max-w-xl mx-auto">
+                            ${targetOrder.map((col, idx) => {
+                                const filled = idx < currentStep;
+                                return `
+                                    <div class="p-4 rounded-2xl border-3 border-slate-900 flex flex-col items-center justify-center h-28 ${filled ? col.hex : 'bg-slate-100 border-dashed'}">
+                                        <span class="text-3xl">${filled ? col.emoji : '🥤'}</span>
+                                        <span class="font-bold text-sm mt-1">${filled ? col.name : `Gelas ${idx + 1}`}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- PILIHAN BOLA WARNA -->
+                        <div>
+                            <p class="font-bold text-slate-800 mb-3 text-lg">
+                                Klik Bola Warna Berikutnya (<span class="underline text-rose-600">Urutan ke-${currentStep + 1}</span>):
+                            </p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                                ${shuffled.map(c => `
+                                    <button onclick="pickColorBall('${c.name}')" class="kid-btn ${c.hex} p-4 font-bold text-xl flex flex-col items-center gap-1">
+                                        <span class="text-4xl">${c.emoji}</span>
+                                        <span>${c.name}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            window.pickColorBall = function(colorName) {
+                const expected = targetOrder[currentStep].name;
+                if (colorName === expected) {
+                    playSFX('correct');
+                    addScore(5, 15);
+                    currentStep++;
+                    if (currentStep >= targetOrder.length) {
+                        if (round < 2) {
+                            round++;
+                            currentStep = 0;
+                            showToast("🎨 Rangkaian 1 Selesai! Lanjut Rangkaian ke-2!");
+                        } else {
+                            markGameCompleted(5);
+                            playSFX('win');
+                            stage.innerHTML = `
+                                <div class="text-center my-auto space-y-4 py-6">
+                                    <div class="text-7xl">🎨🏆</div>
+                                    <h3 class="text-3xl font-bold text-emerald-700">Urutan Warna Sempurna!</h3>
+                                    <p class="text-lg font-medium text-slate-700">Merah, Kuning, Biru, Hijau tersusun rapi berkat kerja sama yang hebat!</p>
+                                    <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                                </div>
+                            `;
+                            return;
+                        }
+                    }
+                    renderColorGame();
+                } else {
+                    playSFX('wrong');
+                    showToast(`❌ Belum tepat! Cari warna ${expected} dulu ya!`);
+                }
+            };
+
+            renderColorGame();
+        }
+
+        /* =========================================================================
+           GAME 6 (BAB 2): GOBAK SODOR & SIKAP JUJUR SPORTIF
+           ========================================================================= */
+        function initGame6_GobakSodor(stage) {
+            let linePassed = 0;
+            const totalLines = 4;
+
+            function renderGobak() {
+                stage.innerHTML = `
+                    <div class="text-center space-y-4">
+                        <div class="bg-purple-100 p-4 rounded-2xl border-3 border-slate-900 max-w-2xl mx-auto">
+                            <span class="text-xs font-bold uppercase text-purple-900">BAB 2 • PERMAINAN TRADISIONAL GOBAK SODOR</span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
+                                Loloskan Tim Penyerang Melewati 4 Garis Penjaga!
+                            </h3>
+                        </div>
+
+                        <!-- VISUAL GARIS LAPANGAN GOBAK SODOR -->
+                        <div class="max-w-xl mx-auto space-y-2 bg-emerald-100 p-4 rounded-3xl border-3 border-slate-900">
+                            ${[4, 3, 2, 1].map(lineNum => `
+                                <div class="p-3 rounded-xl border-2 border-slate-900 flex items-center justify-between ${linePassed >= lineNum ? 'bg-emerald-400 text-white' : 'bg-white'}">
+                                    <span class="font-bold text-base">GARIS PENJAGA ${lineNum}</span>
+                                    <span class="text-2xl">${linePassed >= lineNum ? '🏃‍♂️✅ LOLOS!' : '🚧👮‍♂️ DIJAGA'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="crossGobakLine()" class="kid-btn bg-emerald-400 hover:bg-emerald-300 text-slate-900 font-bold text-xl px-7 py-4">
+                                💨 TEROBOS GARIS BERIKUTNYA!
+                            </button>
+                            <button onclick="honestTagGobak()" class="kid-btn bg-amber-300 hover:bg-amber-200 text-slate-900 font-bold text-base px-5 py-4">
+                                🙋‍♂️ AKUI JIKA TERSENTUH (SIKAP JUJUR +25)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            window.crossGobakLine = function() {
+                playSFX('jump');
+                linePassed++;
+                addScore(6, 25);
+                showToast(`🎉 Berhasil melewati Garis ${linePassed}! +25 Poin!`);
+                if (linePassed >= totalLines) {
+                    markGameCompleted(6);
+                    playSFX('win');
+                    stage.innerHTML = `
+                        <div class="text-center my-auto space-y-4 py-6">
+                            <div class="text-7xl">🏃‍♀️🏅</div>
+                            <h3 class="text-3xl font-bold text-emerald-700">Tim Penyerang Menang Sportif!</h3>
+                            <p class="text-lg font-medium text-slate-700">Kamu berhasil melewati semua garis Gobak Sodor dengan lincah dan jujur!</p>
+                            <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                        </div>
+                    `;
+                    return;
+                }
+                renderGobak();
+            };
+
+            window.honestTagGobak = function() {
+                playSFX('correct');
+                addScore(6, 25);
+                showToast("🌟 Sikap Jujur Luar Biasa! Mengakui sentuhan lawan mendapat +25 Poin!");
+            };
+
+            renderGobak();
+        }
+
+        /* =========================================================================
+           GAME 7 (BAB 2): BOLA BALON & PERMAINAN KASTI
+           ========================================================================= */
+        function initGame7_BolaBalonKasti(stage) {
+            let balloonHits = 0;
+            let kastiStage = 0; // 0: Bola Balon (5 pukulan), 1: Pukul Kasti, 2: Lari Zona Aman, 3: Kembali Ruang Pemukul
+
+            function renderBolaKasti() {
+                if (kastiStage === 0) {
+                    stage.innerHTML = `
+                        <div class="text-center space-y-4 my-auto">
+                            <span class="bg-teal-200 px-3 py-1 rounded-full border-2 border-slate-900 font-bold text-xs uppercase">BAGIAN 1: PERMAINAN BOLA BALON</span>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900">
+                                Jaga Balon Jangan Jatuh! Teriak: "AKU AMBIL!"
+                            </h3>
+                            <div class="text-7xl animate-bounce-slow my-3">🎈</div>
+                            <div class="giant-number text-4xl font-bold text-teal-800">
+                                Operan Berhasil: ${balloonHits} / 5
+                            </div>
+                            <button onclick="hitBalloon()" class="kid-btn bg-teal-400 hover:bg-teal-300 text-slate-900 font-bold text-xl md:text-2xl px-8 py-5">
+                                ✋ "AKU AMBIL!" (PUKUL BALON)
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    const kastiSteps = [
+                        { title: "1️⃣ PUKUL BOLA KASTI DENGAN PEMUKUL LEBAR!", btn: "🏏 PUKUL BOLA SEJAUH MUNGKIN!", icon: "⚾🏏" },
+                        { title: "2️⃣ BERLARI KENCANG MENUJU ZONA AMAN!", btn: "🏃‍♂️ LARI KE ZONA AMAN!", icon: "🚩🏃‍♂️" },
+                        { title: "3️⃣ KEMBALI KE RUANG PEMUKUL DENGAN AMAN!", btn: "🏠 KEMBALI KE RUANG PEMUKUL!", icon: "🏆🏠" }
+                    ];
+                    const cur = kastiSteps[kastiStage - 1];
+                    stage.innerHTML = `
+                        <div class="text-center space-y-4 my-auto">
+                            <span class="bg-amber-300 px-3 py-1 rounded-full border-2 border-slate-900 font-bold text-xs uppercase">BAGIAN 2: PERMAINAN KASTI</span>
+                            <div class="text-7xl my-2">${cur.icon}</div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900">${cur.title}</h3>
+                            <button onclick="nextKastiStep()" class="kid-btn bg-rose-400 hover:bg-rose-300 text-slate-900 font-bold text-xl md:text-2xl px-8 py-5">
+                                ${cur.btn}
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            window.hitBalloon = function() {
+                playSFX('jump');
+                balloonHits++;
+                addScore(7, 10);
+                if (balloonHits >= 5) {
+                    playSFX('correct');
+                    showToast("🎈 Hebat! Lanjut ke Permainan Kasti!");
+                    kastiStage = 1;
+                }
+                renderBolaKasti();
+            };
+
+            window.nextKastiStep = function() {
+                playSFX('correct');
+                addScore(7, 25);
+                kastiStage++;
+                if (kastiStage > 3) {
+                    markGameCompleted(7);
+                    playSFX('win');
+                    stage.innerHTML = `
+                        <div class="text-center my-auto space-y-4 py-6">
+                            <div class="text-7xl">🎈🏏🏆</div>
+                            <h3 class="text-3xl font-bold text-emerald-700">Juara Bola Balon & Kasti!</h3>
+                            <p class="text-lg font-medium text-slate-700">Kamu berhasil bekerja sama dalam tim dan mencetak poin kasti!</p>
+                            <button onclick="backToLobby()" class="kid-btn bg-emerald-400 px-8 py-4 text-xl font-bold">KEMBALI KE PETA GAME ➡️</button>
+                        </div>
+                    `;
+                    return;
+                }
+                renderBolaKasti();
+            };
+
+            renderBolaKasti();
+        }
+
+        /* =========================================================================
+           GAME 8 (BAB 1 & 2): KUIS SIKAP JUARA PJOK (10 SOAL CERIA KELAS 2 SD)
+           ========================================================================= */
+        function initGame8_KuisJuara(stage) {
+            const questions = [
+                {
+                    q: "Sebelum berolahraga seperti Lala dan Jaya, kita harus melakukan ... agar otot tidak cedera.",
+                    opts: ["Peregangan", "Tidur siang", "Makan es krim"],
+                    ans: 0
+                },
+                {
+                    q: "Berjalan, berlari, dan melompat membuat tubuh kita menjadi ...",
+                    opts: ["Cepat lelah", "Kuat dan sehat", "Mudah sakit"],
+                    ans: 1
+                },
+                {
+                    q: "Saat guru berkata 'Patung!' pada permainan Patung Ajaib, kita harus diam selama ... detik.",
+                    opts: ["10 detik", "100 detik", "1 detik"],
+                    ans: 0
+                },
+                {
+                    q: "Pada permainan Bola Kaleng, kaleng bekas disusun membentuk pola ...",
+                    opts: ["Lingkaran", "Piramida", "Garis lurus"],
+                    ans: 1
+                },
+                {
+                    q: "Dalam permainan Kelinci dan Wortel, bola-bola kecil warna-warni diibaratkan sebagai ...",
+                    opts: ["Batu sungai", "Wortel", "Kelereng"],
+                    ans: 1
+                },
+                {
+                    q: "Saat bermain bersama teman di Bab 2 (Serunya Bermain!), sikap kita harus ...",
+                    opts: ["Curang agar menang", "Bermain adil dan jujur", "Menyalahkan teman"],
+                    ans: 1
+                },
+                {
+                    q: "Urutan warna bola pada permainan Menyusun Warna di Bab 2 adalah ...",
+                    opts: ["Merah, Kuning, Biru, Hijau", "Hitam, Putih, Cokelat", "Ungu, Merah, Pink"],
+                    ans: 0
+                },
+                {
+                    q: "Saat tubuhmu terkena sentuhan penjaga pada permainan Gobak Sodor, kamu harus ...",
+                    opts: ["Marah dan lari", "Mengaku dengan jujur", "Diam saja"],
+                    ans: 1
+                },
+                {
+                    q: "Pada permainan Tangkap Ekorku, anak yang berdiri paling depan disebut ...",
+                    opts: ["Ekor", "Kepala", "Sayap"],
+                    ans: 1
+                },
+                {
+                    q: "Jika tim kita kalah saat bertanding sepak bola atau kasti, sikap yang baik adalah ...",
+                    opts: ["Menangis kencang", "Menerima kekalahan dengan lapang dada", "Memusuhi lawan"],
+                    ans: 1
+                }
+            ];
+
+            let qIdx = 0;
+
+            function renderQuiz() {
+                if (qIdx >= questions.length) {
+                    markGameCompleted(8);
+                    playSFX('win');
+                    stage.innerHTML = `
+                        <div class="text-center my-auto space-y-4 py-6">
+                            <div class="text-7xl">🎓🏆🌟</div>
+                            <h3 class="text-3xl font-bold text-emerald-700">Selamat! Semua 10 Soal Kuis Selesai!</h3>
+                            <p class="text-lg font-medium text-slate-700">Kamu benar-benar memahami materi gerak dasar dan sportivitas PJOK Kelas 2 SD!</p>
+                            <button onclick="openFinishModal()" class="kid-btn bg-emerald-500 text-white px-8 py-4 text-xl font-bold">📲 LIHAT SKOR & KIRIM KE WHATSAPP</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const item = questions[qIdx];
+                stage.innerHTML = `
+                    <div class="max-w-2xl mx-auto space-y-5 my-auto w-full">
+                        <div class="flex items-center justify-between">
+                            <span class="bg-amber-300 px-4 py-1 rounded-full border-2 border-slate-900 font-bold text-sm">
+                                SOAL NOMOR <span class="text-2xl">${qIdx + 1}</span> / <span class="text-2xl">10</span>
+                            </span>
+                            <span class="text-sm font-bold text-slate-600">+15 Poin / Soal</span>
+                        </div>
+
+                        <div class="bg-sky-100 p-6 rounded-3xl border-3 border-slate-900">
+                            <h3 class="text-xl md:text-2xl font-bold text-slate-900 leading-relaxed">
+                                ${item.q}
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3">
+                            ${item.opts.map((opt, idx) => `
+                                <button onclick="answerQuiz(${idx}, ${item.ans})" class="kid-btn bg-white hover:bg-amber-200 w-full p-4 text-left font-bold text-lg md:text-xl flex items-center gap-3">
+                                    <span class="bg-slate-900 text-white w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                                        ${['A', 'B', 'C'][idx]}
+                                    </span>
+                                    <span>${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            window.answerQuiz = function(selected, correct) {
+                if (selected === correct) {
+                    playSFX('correct');
+                    addScore(8, 15);
+                    showToast("🌟 Jawaban Benar! +15 Poin!");
+                    qIdx++;
+                    renderQuiz();
+                } else {
+                    playSFX('wrong');
+                    showToast("🤔 Coba pikirkan lagi ya, pilih jawaban yang sportif!");
+                }
+            };
+
+            renderQuiz();
+        }
+
+        /* =========================================================================
+           4. SISTEM PEMBERITAHUAN HASIL KE WHATSAPP (WA LINK GENERATOR)
+           ========================================================================= */
+        function buildWhatsAppMessage() {
+            const doneCount = Object.keys(STATE.completedGames).length;
+            const totalMinsUsed = Math.max(1, Math.round((3600 - STATE.timeLeftSeconds) / 60));
+            let predicate = "Bintang Juara PJOK ⭐⭐⭐";
+            if (STATE.totalScore < 200) predicate = "Peserta Semangat ⭐";
+            else if (STATE.totalScore < 500) predicate = "Atlet Cilik Hebat ⭐⭐";
+
+            return `🏅 *PEMBERITAHUAN HASIL GAME PJOK KELAS 2 SD* 🏅\n\n` +
+                   `Halo! Berikut adalah laporan hasil belajar interaktif *Bab 1 (Ayo, Gerakkan Badanmu!)* & *Bab 2 (Serunya Bermain!)*:\n\n` +
+                   `👤 *Nama Peserta:* ${STATE.studentName}\n` +
+                   `🏫 *Kelas/Absen:* ${STATE.studentClass}\n` +
+                   `⭐ *Total Skor:* ${STATE.totalScore} Poin\n` +
+                   `🎯 *Arena Selesai:* ${doneCount} dari 8 Permainan\n` +
+                   `⏱️ *Waktu Bermain:* ${totalMinsUsed} Menit\n` +
+                   `🏆 *Predikat:* ${predicate}\n\n` +
+                   `Terima kasih telah bermain dengan jujur, lincah, dan sportif! 💪⚽`;
+        }
+
+        function openFinishModal() {
+            playSFX('click');
+            const doneCount = Object.keys(STATE.completedGames).length;
+            document.getElementById('res-name').innerText = STATE.studentName;
+            document.getElementById('res-class').innerText = STATE.studentClass;
+            document.getElementById('res-total-score').innerText = STATE.totalScore;
+            document.getElementById('res-games-done').innerText = `${doneCount}/8`;
+
+            const waInput = document.getElementById('res-wa-number');
+            if (!waInput.value && STATE.studentWA) {
+                waInput.value = STATE.studentWA;
+            }
+            document.getElementById('res-wa-preview').value = buildWhatsAppMessage();
+            document.getElementById('modal-finish').classList.remove('hidden');
+        }
+
+        function closeFinishModal() {
+            playSFX('click');
+            document.getElementById('modal-finish').classList.add('hidden');
+        }
+
+        function formatPhoneForWA(raw) {
+            let digits = raw.replace(/\D/g, '');
+            if (digits.startsWith('0')) {
+                digits = '62' + digits.slice(1);
+            }
+            return digits;
+        }
+
+        function sendWhatsAppNotification() {
+            playSFX('win');
+            const rawPhone = document.getElementById('res-wa-number').value.trim();
+            const message = encodeURIComponent(buildWhatsAppMessage());
+            const cleanPhone = formatPhoneForWA(rawPhone);
+
+            const waUrl = cleanPhone 
+                ? `https://wa.me/${cleanPhone}?text=${message}`
+                : `https://wa.me/?text=${message}`;
+
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+            showToast("📲 Membuka WhatsApp untuk mengirim laporan skor!");
+        }
+
+        function copyReportText() {
+            const textarea = document.getElementById('res-wa-preview');
+            textarea.select();
+            document.execCommand('copy');
+            playSFX('correct');
+            showToast("📋 Teks laporan berhasil disalin!");
+        }
+    </script>
+</body>
+</html>
